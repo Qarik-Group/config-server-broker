@@ -15,12 +15,15 @@ require (
 	github.com/cloudfoundry/bosh-cli v6.2.1+incompatible // indirect
 	github.com/cloudfoundry/bosh-utils v0.0.0-20200606100138-7f673ba6be2a // indirect
 	github.com/cppforlife/go-patch v0.2.0 // indirect
+	github.com/fatih/color v1.9.0 // indirect
 	github.com/gorilla/mux v1.7.4 // indirect
+	github.com/lunixbochs/vtclean v1.0.0 // indirect
 	github.com/mattn/go-runewidth v0.0.9 // indirect
 	github.com/pborman/uuid v1.2.0 // indirect
 	github.com/pivotal-cf/brokerapi v6.4.2+incompatible
 	github.com/pkg/errors v0.9.1 // indirect
 	github.com/sirupsen/logrus v1.6.0 // indirect
+	github.com/vito/go-interact v1.0.0 // indirect
 	gopkg.in/cheggaaa/pb.v1 v1.0.28 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20200605160147-a5ece683394c
 )

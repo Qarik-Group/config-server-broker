@@ -5,14 +5,14 @@ import (
 	"errors"
 	"fmt"
 
-	"github.com/cloudfoundry-community/go-cfclient"
+	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
 	brokerapi "github.com/pivotal-cf/brokerapi/domain"
 	brokerapiresponses "github.com/pivotal-cf/brokerapi/domain/apiresponses"
-	"github.com/starkandwayne/config-server-broker/config"
 )
 
 type ConfigServerBroker struct {
-	Config config.Config
+	Config Config
+	Logger BrokerLogger
 }
 
 func (broker *ConfigServerBroker) Services(ctx context.Context) ([]brokerapi.Service, error) {
@@ -101,23 +101,32 @@ func (broker *ConfigServerBroker) LastBindingOperation(ctx context.Context, inst
 }
 
 func (broker *ConfigServerBroker) createBasicInstance(instanceId string) error {
-	request := cfclient.AppCreateRequest{
-		Name:        "config-server-" + instanceId,
-		DockerImage: "hyness/spring-cloud-config-server:latest",
-		SpaceGuid:   "a7cc4fc8-9161-423c-a7a4-19fab3e1b64d",
-		State:       cfclient.APP_STARTED,
-		Environment: map[string]interface{}{
-			"SPRING_CLOUD_CONFIG_SERVER_GIT_URI": "https://github.com/spring-cloud-samples/config-repo",
-		},
-	}
-	fmt.Println("Creating app: %v", request)
-	client, err := broker.Config.GetCfClient()
-	if err != nil {
-		return errors.New("Couldn't create CF client: " + err.Error())
-	}
-	_, err = client.CreateApp(request)
-	if err != nil {
-		return errors.New("Couldn't create app: " + err.Error())
-	}
+	cfClient, err := broker.Config.GetV3CfClient(broker.Logger)
+
+	apps, warnings, err := cfClient.GetApplications(
+		ccv3.Query{Key: ccv3.SpaceGUIDFilter, Values: []string{"a7cc4fc8-9161-423c-a7a4-19fab3e1b64d"}},
+	)
+	fmt.Println("Error: %s", err.Error())
+	fmt.Println("Apps: %v", apps)
+	fmt.Println("Warnings: %v", warnings)
+
+	// 	request := cfclient.AppCreateRequest{
+	// 		Name:        "config-server-" + instanceId,
+	// 		DockerImage: "hyness/spring-cloud-config-server:latest",
+	// 		SpaceGuid:   "a7cc4fc8-9161-423c-a7a4-19fab3e1b64d",
+	// 		State:       cfclient.APP_STARTED,
+	// 		Environment: map[string]interface{}{
+	// 			"SPRING_CLOUD_CONFIG_SERVER_GIT_URI": "https://github.com/spring-cloud-samples/config-repo",
+	// 		},
+	// 	}
+	// 	fmt.Println("Creating app: %v", request)
+	// 	client, err := broker.Config.GetCfClient()
+	// 	if err != nil {
+	// 		return errors.New("Couldn't create CF client: " + err.Error())
+	// 	}
+	// 	_, err = client.CreateApp(request)
+	// 	if err != nil {
+	// 		return errors.New("Couldn't create app: " + err.Error())
+	// 	}
 	return nil
 }

@@ -7,7 +7,6 @@ import (
 	"code.cloudfoundry.org/lager"
 	"github.com/pivotal-cf/brokerapi"
 	"github.com/starkandwayne/config-server-broker/broker"
-	"github.com/starkandwayne/config-server-broker/config"
 )
 
 func main() {
@@ -17,15 +16,17 @@ func main() {
 
 	brokerLogger.Info("Starting Config Server broker")
 
-	brokerConf, err := config.ParseConfig()
+	brokerConf, err := broker.ParseConfig()
 	if err != nil {
 		brokerLogger.Fatal("Reading config from env", err, lager.Data{
-			"broker-config-environment-variable": config.ConfigEnvVarName,
+			"broker-config-environment-variable": broker.ConfigEnvVarName,
 		})
 	}
 
 	serviceBroker := &broker.ConfigServerBroker{
 		Config: brokerConf,
+		Logger: broker.BrokerLogger{
+			Logger: brokerLogger},
 	}
 
 	brokerCredentials := brokerapi.BrokerCredentials{
