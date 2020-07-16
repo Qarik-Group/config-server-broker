@@ -1,0 +1,8 @@
+---
+meta:
+  github:
+    owner:  starkandwayne
+    repo:   config-server-broker
+    branch: initial-pipeline
+    private_key:  ((github.private-key))
+    access_token: ((github.access-token))
