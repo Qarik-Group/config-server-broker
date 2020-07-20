@@ -1,8 +1,21 @@
 ---
 meta:
+
+  name:    config-server-broker
+  target:  snw 
+  url:     pipes.starkandwayne.com
+
+  initial_version: 1.0.0
+
   github:
     owner:  starkandwayne
     repo:   config-server-broker
     branch: initial-pipeline
     private_key:  ((github.private-key))
     access_token: ((github.access-token))
+
+  aws:
+    bucket:      (( grab meta.pipeline ))
+    region_name: us-east-1
+    access_key:  ((aws-access-key))
+    secret_key:  ((aws-secret-key))
