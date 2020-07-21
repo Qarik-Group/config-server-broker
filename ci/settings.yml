@@ -5,7 +5,11 @@ meta:
   target:  snw 
   url:     pipes.starkandwayne.com
 
-  initial_version: 1.0.0
+  initial_version: 0.0.1
+
+  git:
+    email: ci@starkandwayne.com
+    name:  CI Bot
 
   github:
     owner:  starkandwayne
@@ -15,7 +19,5 @@ meta:
     access_token: ((github.access-token))
 
   aws:
-    bucket:      (( grab meta.pipeline ))
-    region_name: us-east-1
     access_key:  ((cfcommunity.access))
     secret_key:  ((cfcommunity.secret))
