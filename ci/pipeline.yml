@@ -87,5 +87,6 @@ resources:
       initial_version:   (( grab meta.initial_version || "0.0.1" ))
       driver:            git
       uri:         (( grab meta.github.uri ))
-      branch:      (( grab meta.github.branch ))
+      branch: version
+      file: version
       private_key: (( grab meta.github.private_key ))
