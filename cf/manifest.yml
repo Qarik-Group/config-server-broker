@@ -1,6 +1,0 @@
----
-applications:
-  - name: config-server-broker
-    path: ../
-    env:
-      CONFIG_SERVER_BROKER_CONFIG: ((config_server_broker_config))
