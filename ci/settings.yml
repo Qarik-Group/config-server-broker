@@ -21,3 +21,7 @@ meta:
   aws:
     access_key:  ((cfcommunity.access))
     secret_key:  ((cfcommunity.secret))
+
+  slack:
+    webhook:  ((slack.webhook))
+    channel:        "#config-server-broker"
