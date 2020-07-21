@@ -66,13 +66,13 @@ jobs:
       - do:
         - { get: version, trigger: false, params: {bump: minor} }
         - { put: version,                 params: {file: version/number} }
-        on_failure:
-          put: notify
-          params:
-            channel:  (( grab meta.slack.channel ))
-            username: (( grab meta.slack.username ))
-            icon_url: (( grab meta.slack.icon ))
-            text:    '(( concat meta.slack.fail_url " " meta.pipeline ": minor job failed" ))'
+       # on_failure:
+       #   put: notify
+       #   params:
+       #     channel:  (( grab meta.slack.channel ))
+       #     username: (( grab meta.slack.username ))
+       #     icon_url: (( grab meta.slack.icon ))
+       #     text:    '(( concat meta.slack.fail_url " " meta.pipeline ": minor job failed" ))'
 resources:
   - name: git
     type: git
@@ -84,10 +84,8 @@ resources:
   - name: version
     type: semver
     source :
-      driver:            s3
-      bucket:            (( grab meta.aws.bucket ))
-      region_name:       (( grab meta.aws.region_name ))
-      key:               version
-      access_key_id:     (( grab meta.aws.access_key ))
-      secret_access_key: (( grab meta.aws.secret_key ))
       initial_version:   (( grab meta.initial_version || "0.0.1" ))
+      driver:            git
+      uri:         (( grab meta.github.uri ))
+      branch:      (( grab meta.github.branch ))
+      private_key: (( grab meta.github.private_key ))
