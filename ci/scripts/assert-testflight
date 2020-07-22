@@ -6,6 +6,3 @@ echo "assert-testflight"
 
 cf login -a ${CF_API_URL} --skip-ssl-validation -u ${CF_USERNAME} -p ${CF_PASSWORD} -o ${CF_ORG} -s ${CF_SPACE}
 
-cf create-service config-server basic testflight-instance -c '{"gitRepoUrl": "https://github.com/spring-cloud-samples/config-repo"}'
-
-cf delete-service testflight-instance

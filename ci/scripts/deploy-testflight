@@ -43,3 +43,5 @@ url="https://$(cf a | grep ${app_name} | awk '{print $NF}')"
 cf create-service-broker ${app_name} admin admin ${url} --space-scoped
 
 cf marketplace
+
+cf create-service config-server basic testflight-instance -c '{"gitRepoUrl": "https://github.com/spring-cloud-samples/config-repo"}'
