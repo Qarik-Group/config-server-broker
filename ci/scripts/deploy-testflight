@@ -6,11 +6,14 @@ echo "deploy-testflight"
 
 cf login -a ${CF_API_URL} --skip-ssl-validation -u ${CF_USERNAME} -p ${CF_PASSWORD} -o ${CF_ORG} -s ${CF_SPACE}
 
-cd git
+pushd git
+
+app_name=testflight-config-server-broker
+
 cat <<EOF > cf/manifest.yml
 ---
 applications:
-  - name: testflight-config-server-broker
+  - name: ${app_name}
     path: ../
     env:
       CONFIG_SERVER_BROKER_CONFIG: ((config_server_broker_config))
@@ -34,3 +37,9 @@ EOF
 bin/push-broker
 
 cf a
+
+url="https://$(cf a | grep ${app_name} | awk '{print $NF}')"
+
+cf create-service-broker ${app_name} admin admin ${url} --space-scoped
+
+cf marketplace
