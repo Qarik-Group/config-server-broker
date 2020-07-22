@@ -188,11 +188,12 @@ jobs:
             inputs:
               - name: version
               - name: git
+                path: (( concat "gopath/src/" meta.go.module ))
             outputs:
               - name: gh
               - name: pushme
             run:
-              path: pipeline-tasks/ci/scripts/shipit
+              path: (( concat "./gopath/src/" meta.go.module "/ci/scripts/shipit" ))
               args: []
             params:
               REPO_ROOT:    git
@@ -225,7 +226,6 @@ jobs:
               channel:  (( grab meta.slack.channel ))
               username: (( grab meta.slack.username ))
               icon_url: (( grab meta.slack.icon ))
-              text_file: notifications/message
         on_failure:
           put: notify
           params:
@@ -233,6 +233,18 @@ jobs:
             username: (( grab meta.slack.username ))
             icon_url: (( grab meta.slack.icon ))
             text:    '(( concat meta.slack.fail_url " " meta.pipeline ": shipit job failed" ))'
+
+resource_types:
+  - name: slack-notification
+    type: docker-image
+    source:
+      repository: cfcommunity/slack-notification-resource
+
+  - name: pull-request
+    type: docker-image
+    source:
+      repository: jtarchie/pr
+
 resources:
   - name: git
     type: git
