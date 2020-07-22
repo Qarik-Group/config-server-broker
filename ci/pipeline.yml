@@ -42,6 +42,18 @@ meta:
     access_key: (( param "Please set your AWS Access Key ID" ))
     secret_key: (( param "Please set your AWS Secret Key ID" ))
 
+groups:
+  - name: (( grab meta.pipeline ))
+    jobs:
+      - test
+      # - test-pr
+      - pre
+      - rc
+      - shipit
+      - major
+      - minor
+      - bump-patch
+
 jobs:
   - name: test
     public: true
@@ -166,6 +178,20 @@ jobs:
             username: (( grab meta.slack.username ))
             icon_url: (( grab meta.slack.icon ))
             text:    '(( concat meta.slack.fail_url " " meta.pipeline ": rc job failed" ))'
+
+  - name: bump-patch
+    public: true
+    plan:
+      - do:
+        - { get: version, trigger: true, params: { bump: patch, pre: rc }, passed: [shipit] } # bump rc + patch, so that subesquent version bumps can trigger a new bump-patch
+        - { put: version,                params: { file: version/number} }
+        on_failure:
+          put: notify
+          params:
+            channel:  (( grab meta.slack.channel ))
+            username: (( grab meta.slack.username ))
+            icon_url: (( grab meta.slack.icon ))
+            text:    '(( concat meta.slack.fail_url " " meta.pipeline ": bump-patch job failed" ))'
 
   - name: shipit
     public: true
