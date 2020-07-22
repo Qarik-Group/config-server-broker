@@ -23,6 +23,15 @@ meta:
     name: starkandwayne/concourse-go
     tag: (( grab meta.go.version ))
 
+  testflight:
+    cf:
+      api_url: (( param "Please specify testflight.cf.api_url" ))
+      skip_ssl_validation: true
+      username: (( param "Please specify testflight.cf.username" ))
+      org: (( param "Please specify testflight.cf.org" ))
+      space: (( param "Please specify testflight.cf.space" ))
+      password: (( param "Please specify testflight.cf.password" ))
+
   slack:
     webhook:       (( param "Please specify your Slack Incoming Webhook Integration URL" ))
     username:      concourse
@@ -94,8 +103,8 @@ jobs:
       - do:
         - in_parallel:
           - { get: pipeline-tasks }
-          - { get: git, trigger: true, params: { passed: [test] } }
-        - task: test
+          - { get: git, trigger: true, passed: [test] }
+        - task: deploy-testflight
           config:
             platform: linux
             image_resource:
@@ -109,6 +118,13 @@ jobs:
             run:
               path: pipeline-tasks/ci/scripts/deploy-testflight
               args: []
+            params:
+              CF_API_URL: (( grab meta.testflight.cf.api_url ))
+              SKIP_SSL_VALIDATION: (( grab meta.testflight.cf.skip_ssl_validation ))
+              CF_USERNAME: (( grab meta.testflight.cf.username ))
+              CF_PASSWORD: (( grab meta.testflight.cf.password ))
+              CF_ORG: (( grab meta.testflight.cf.org ))
+              CF_SPACE: (( grab meta.testflight.cf.space ))
         on_failure:
           put: notify
           params:
@@ -152,7 +168,7 @@ jobs:
     - do:
       - get: git
         passed:
-        - test
+        - testflight
         trigger: true
       - get: version
         trigger: true

@@ -25,3 +25,11 @@ meta:
   slack:
     webhook:  ((slack.webhook))
     channel:        "#config-server-broker"
+
+  testflight:
+    cf:
+      api_url: https://api.system.cf.dave.lab.starkandwayne.com
+      username: admin
+      org: config-server-broker
+      space: testflight
+      password: ((testflight.cf-password))
