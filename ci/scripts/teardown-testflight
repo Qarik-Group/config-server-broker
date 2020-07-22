@@ -7,5 +7,7 @@ echo "teardown-testflight"
 cf login -a ${CF_API_URL} --skip-ssl-validation -u ${CF_USERNAME} -p ${CF_PASSWORD} -o ${CF_ORG} -s ${CF_SPACE}
 
 app_name=testflight-config-server-broker
+
 cf delete-service-broker -f ${app_name}
+
 cf delete -f -r ${app_name}
