@@ -36,14 +36,34 @@ fi
 
 ###############################################################
 
+go version; echo; echo
+#?#ORIGIN=$(pwd)
+TARGETS=${TARGETS:-linux/amd64 darwin/amd64}
 ROOT=$( cd "$( dirname "${BASH_SOURCE[0]}" )/../.." && pwd )
 
 pushd $REPO_ROOT
+newgopath=${ROOT%%/gopath/*}/gopath
+if [[ -d ${newgopath} ]]; then
+	if [[ -z ${GOPATH} ]]; then
+		GOPATH="${newgopath}"
+	else
+		GOPATH="${newgopath}:${GOPATH}"
+	fi
+	PATH="${PATH}:${newgopath}/bin"
+fi
+echo ">> Using GOPATH ${GOPATH}"
+go get github.com/mitchellh/gox
+popd
 
+if [[ -n ${STATIC_BINARY} && ${STATIC_BINARY} != "false" ]]; then
+	export CGO_ENABLED=0
+fi
+
+pushd $REPO_ROOT
 mkdir artifacts
-
-gradle -console verbose --no-build-cache --no-daemon assemble && mv build/libs/* artifacts
-
+gox -osarch="${TARGETS}" --output="artifacts/${BINARY}-{{.OS}}-{{.Arch}}" -ldflags="-X main.Version=${VERSION}" ./...
+go build -o "${BINARY}" -ldflags="-X main.Version=${VERSION}" ${CMD_PKG:-.}
+./${BINARY} -v
 popd
 
 echo "v${VERSION}"                         > ${RELEASE_ROOT}/tag
