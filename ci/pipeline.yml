@@ -30,7 +30,11 @@ meta:
       username: (( param "Please specify testflight.cf.username" ))
       org: (( param "Please specify testflight.cf.org" ))
       space: (( param "Please specify testflight.cf.space" ))
-      password: (( param "Please specify testflight.cf.password" ))
+      instance_space_guid: (( param "Please specify testflight.cf.password" ))
+      instance_domain: (( param "Please specify testflight.cf.domain" ))
+    uaa:
+      client_id: (( param "Please specify testflight.uaa.client_id" ))
+      client_secret: (( param "Please specify testflight.uaa.client_secret" ))
 
   slack:
     webhook:       (( param "Please specify your Slack Incoming Webhook Integration URL" ))
@@ -125,6 +129,10 @@ jobs:
               CF_PASSWORD: (( grab meta.testflight.cf.password ))
               CF_ORG: (( grab meta.testflight.cf.org ))
               CF_SPACE: (( grab meta.testflight.cf.space ))
+              UAA_CLIENT_ID: (( grab meta.testflight.uaa.client_id ))
+              UAA_CLIENT_SECRET: (( grab meta.testflight.uaa.client_secret ))
+              INSTANCE_SPACE_GUID: (( grab meta.testflight.cf.instance_space_guid ))
+              INSTANCE_DOMAIN: (( grab meta.testflight.cf.instance_domain ))
         on_failure:
           put: notify
           params:

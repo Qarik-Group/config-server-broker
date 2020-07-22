@@ -28,8 +28,14 @@ meta:
 
   testflight:
     cf:
-      api_url: https://api.system.cf.dave.lab.starkandwayne.com
+      api_url: https://api.system.cf.new.dave.lab.starkandwayne.com
       username: admin
       org: config-server-broker
       space: testflight
       password: ((testflight.cf-password))
+      instance_space_guid: "1ea1854e-ce7d-45b9-976b-17ff2cc7ac43"
+      instance_domain: "system.cf.dave.lab.starkandwayne.com"
+
+    uaa:
+      client_id: config-server-broker
+      client_secret: ((testflight.uaa-client-secret))
