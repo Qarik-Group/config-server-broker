@@ -46,7 +46,7 @@ groups:
   - name: (( grab meta.pipeline ))
     jobs:
       - test
-      # - test-pr
+      - testflight
       - pre
       - rc
       - shipit
@@ -60,8 +60,9 @@ jobs:
     serial: true
     plan:
       - do:
-        - { get: git, trigger: true }
-        - { get: pipeline-tasks }
+        - in_parallel:
+          - { get: git, trigger: true }
+          - { get: pipeline-tasks }
         - task: test
           config:
             platform: linux
@@ -79,6 +80,35 @@ jobs:
               args: []
             params:
               MODULE: (( grab meta.go.module ))
+        on_failure:
+          put: notify
+          params:
+            channel:  (( grab meta.slack.channel ))
+            username: (( grab meta.slack.username ))
+            icon_url: (( grab meta.slack.icon ))
+            text:    '(( concat meta.slack.fail_url " " meta.pipeline ": test job failed" ))'
+
+  - name: testflight
+    public: true
+    plan:
+      - do:
+        - in_parallel:
+          - { get: pipeline-tasks }
+          - { get: git, trigger: true, params: { passed: [test] } }
+        - task: test
+          config:
+            platform: linux
+            image_resource:
+              type: docker-image
+              source:
+                repository: (( grab meta.image.name ))
+                tag:        (( grab meta.image.tag ))
+            inputs:
+              - name: pipeline-tasks
+              - name: git
+            run:
+              path: pipeline-tasks/ci/scripts/deploy-testflight
+              args: []
         on_failure:
           put: notify
           params:
