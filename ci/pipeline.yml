@@ -11,14 +11,14 @@ meta:
     repo:         (( param "Please specify the name of the Github repository" ))
     branch:       master
     private_key:  (( param "Please generate an SSH Deployment Key for this repo and specify it here" ))
-  
+
   go:
     version: 1.14
     module:  (( concat "github.com/" meta.github.owner "/" meta.github.repo ))
     cmd_module: (( grab meta.go.module ))
     binary:  (( grab meta.github.repo ))
     force_static_binary: false
-  
+
   image:
     name: starkandwayne/concourse-go
     tag: (( grab meta.go.version ))
@@ -61,6 +61,7 @@ jobs:
     plan:
       - do:
         - { get: git, trigger: true }
+        - { get: pipeline-tasks }
         - task: test
           config:
             platform: linux
@@ -70,10 +71,11 @@ jobs:
                 repository: (( grab meta.image.name ))
                 tag:        (( grab meta.image.tag ))
             inputs:
+              - name: pipeline-tasks
               - name: git
                 path: (( concat "gopath/src/" meta.go.module ))
             run:
-              path: (( concat "./gopath/src/" meta.go.module "/ci/scripts/test" ))
+              path: pipeline-tasks/ci/scripts/test
               args: []
             params:
               MODULE: (( grab meta.go.module ))
@@ -202,6 +204,7 @@ jobs:
           in_parallel:
             - { get: version, passed: [rc], params: {bump: final} }
             - { get: git,     passed: [rc] }
+            - { get: pipeline-tasks }
         - name: release
           task: release
           config:
@@ -212,6 +215,7 @@ jobs:
                 tag:        (( grab meta.image.tag ))
             platform: linux
             inputs:
+              - name: pipeline-tasks
               - name: version
               - name: git
                 path: (( concat "gopath/src/" meta.go.module ))
@@ -219,7 +223,7 @@ jobs:
               - name: gh
               - name: pushme
             run:
-              path: (( concat "./gopath/src/" meta.go.module "/ci/scripts/shipit" ))
+              path: pipeline-tasks/ci/shipit
               args: []
             params:
               REPO_ROOT:    git
@@ -275,6 +279,15 @@ resources:
   - name: git
     type: git
     source:
+      ignore_paths: ["ci/*[^md]"]
+      uri:         (( grab meta.github.uri ))
+      branch:      (( grab meta.github.branch ))
+      private_key: (( grab meta.github.private_key ))
+
+  - name: pipeline-tasks
+    type: git
+    source:
+      paths:       ["ci/scripts/*"]
       uri:         (( grab meta.github.uri ))
       branch:      (( grab meta.github.branch ))
       private_key: (( grab meta.github.private_key ))

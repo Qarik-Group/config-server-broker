@@ -2,7 +2,7 @@
 meta:
 
   name:    config-server-broker
-  target:  snw 
+  target:  snw
   url:     pipes.starkandwayne.com
 
   initial_version: 0.0.1
@@ -14,7 +14,7 @@ meta:
   github:
     owner:  starkandwayne
     repo:   config-server-broker
-    branch: ci
+    branch: testflight
     private_key:  ((github.private-key))
     access_token: ((github.access-token))
 
