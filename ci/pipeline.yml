@@ -301,7 +301,7 @@ jobs:
               path: pipeline-tasks/ci/shipit
               args: []
             params:
-              REPO_ROOT:    git
+              REPO_ROOT:    (( concat "gopath/src/" meta.go.module ))
               VERSION_FROM: version/number
               RELEASE_NAME: (( grab meta.release ))
               RELEASE_ROOT: gh
