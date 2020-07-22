@@ -1,0 +1,9 @@
+#!/bin/bash
+
+set -eu
+
+echo "teardown-testflight"
+
+cf login -a ${CF_API_URL} --skip-ssl-validation -u ${CF_USERNAME} -p ${CF_PASSWORD} -o ${CF_ORG} -s ${CF_SPACE}
+
+cf delete -f -r testflight-config-server-broker

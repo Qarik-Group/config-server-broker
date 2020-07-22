@@ -108,6 +108,27 @@ jobs:
         - in_parallel:
           - { get: pipeline-tasks }
           - { get: git, trigger: true, passed: [test] }
+        - task: teardown-testflight
+          config:
+            platform: linux
+            image_resource:
+              type: docker-image
+              source:
+                repository: (( grab meta.image.name ))
+                tag:        (( grab meta.image.tag ))
+            inputs:
+              - name: pipeline-tasks
+              - name: git
+            run:
+              path: pipeline-tasks/ci/scripts/teardown-testflight
+              args: []
+            params:
+              CF_API_URL: (( grab meta.testflight.cf.api_url ))
+              SKIP_SSL_VALIDATION: (( grab meta.testflight.cf.skip_ssl_validation ))
+              CF_USERNAME: (( grab meta.testflight.cf.username ))
+              CF_PASSWORD: (( grab meta.testflight.cf.password ))
+              CF_ORG: (( grab meta.testflight.cf.org ))
+              CF_SPACE: (( grab meta.testflight.cf.space ))
         - task: deploy-testflight
           config:
             platform: linux
