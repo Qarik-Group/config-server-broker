@@ -70,11 +70,11 @@ func (broker *ConfigServerBroker) Provision(ctx context.Context, instanceID stri
 
 	var params InstanceParams
 	err = json.Unmarshal(serviceDetails.RawParameters, &params)
-	if err != nil {
-		return spec, errors.New("Couldn't unmarshal params, required fields: gitRepoUrl")
-	}
 	if params.GitRepoUrl == "" {
 		return spec, errors.New("Missing parameter 'gitRepoUrl'")
+	}
+	if err != nil {
+		return spec, err
 	}
 
 	if serviceDetails.PlanID != broker.Config.BasicPlanId {
