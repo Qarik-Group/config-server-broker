@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	"code.cloudfoundry.org/cli/api/cloudcontroller/ccerror"
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3"
 	"code.cloudfoundry.org/cli/api/cloudcontroller/ccv3/constant"
 	"code.cloudfoundry.org/cli/types"
@@ -97,6 +98,12 @@ func (broker *ConfigServerBroker) Deprovision(ctx context.Context, instanceID st
 	}
 	appName := makeAppName(instanceID)
 	app, _, err := cfClient.GetApplicationByNameAndSpace(appName, broker.Config.InstanceSpaceGUID)
+	appNotFound := ccerror.ApplicationNotFoundError{Name: appName}
+	if err == appNotFound {
+		broker.Logger.Info("app-not-found")
+		return spec, nil
+	}
+
 	if err != nil {
 		return spec, err
 	}
