@@ -33,7 +33,7 @@ meta:
       org: config-server-broker
       space: testflight
       password: ((testflight.cf-password))
-      instance_space_guid: "1ea1854e-ce7d-45b9-976b-17ff2cc7ac43"
+      instance_space_guid: "3837cd45-12ed-4b06-94eb-0f9858ff1d24" # org: config-server-broker space: testflight
       instance_domain: "system.cf.dave.lab.starkandwayne.com"
 
     uaa:
