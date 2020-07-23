@@ -23,5 +23,8 @@ TOKEN=$(uaac context ${client_id} | grep access_token | awk '{ print $2 }')
 echo "Could get token: ${TOKEN}"
 
 # verify that we can get config
-
+name_val=$(curl -k -v -H "Authorization: bearer ${TOKEN}" ${instance_uri}/foo/foo | jq -r '.name')
+if [[ "${name_val}" != "foo" ]]; then
+  exit 1
+fi
 cf delete-service-key -f testflight-instance testflight-key
