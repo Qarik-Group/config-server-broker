@@ -24,7 +24,14 @@ echo "Could get token: ${TOKEN}"
 
 # verify that we can get config
 name_val=$(curl -k -v -H "Authorization: bearer ${TOKEN}" ${instance_uri}/foo/foo | jq -r '.name')
-if [[ "${name_val}" != "foo" ]]; then
-  exit 1
+SUCCESS=false
+for i in {1..5}; do 
+  if [[ "${name_val}" == "foo" ]]; then
+    SUCCESS=true && break
+  fi
+  sleep 5
+done
+if [[  "${SUCCESS}" == "false" ]]; then
+  echo "Config wasn't returned correctly"
 fi
 cf delete-service-key -f testflight-instance testflight-key
