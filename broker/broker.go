@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
+	"strconv"
 	"strings"
 	"time"
 
@@ -247,6 +248,7 @@ func (broker *ConfigServerBroker) createBasicInstance(instanceId string, params 
 		"SPRING_CLOUD_CONFIG_SERVER_GIT_URI": *types.NewFilteredString(params.GitRepoUrl),
 		"JBP_CONFIG_OPEN_JDK_JRE":            *types.NewFilteredString("{ jre: { version: 14.+ } }"),
 		"JWK_SET_URI":                        *types.NewFilteredString(fmt.Sprintf("%v/token_keys", info.UAA())),
+		"SKIP_SSL_VALIDATION":                *types.NewFilteredString(strconv.FormatBool(broker.Config.CfConfig.SkipSslValidation)),
 		"REQUIRED_AUDIENCE":                  *types.NewFilteredString(fmt.Sprintf("config-server.%v", instanceId)),
 	})
 
