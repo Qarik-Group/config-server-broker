@@ -82,6 +82,7 @@ jobs:
         - in_parallel:
           - { get: git, trigger: true }
           - { get: pipeline-tasks }
+          - { get: fetch-spring-latest-rel }
         - task: test
           config:
             platform: linux
