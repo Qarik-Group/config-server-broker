@@ -82,7 +82,7 @@ jobs:
         - in_parallel:
           - { get: git, trigger: true }
           - { get: pipeline-tasks }
-          - { get: fetch-spring-latest-rel }
+          - { get: fetch-spring-latest-rel, trigger: true }
         - task: test
           config:
             platform: linux
@@ -115,6 +115,7 @@ jobs:
         - in_parallel:
           - { get: pipeline-tasks }
           - { get: git, trigger: true, passed: [test] }
+          - { get: fetch-spring-latest-rel, trigger: true, passed: [test] }
         - task: teardown-testflight
           config:
             platform: linux
