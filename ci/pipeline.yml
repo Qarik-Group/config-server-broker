@@ -9,7 +9,14 @@ meta:
     uri:          (( concat "git@github.com:" meta.github.owner "/" meta.github.repo ))
     owner:        (( param "Please specify the name of the user / organization that owns the Github repository" ))
     repo:         (( param "Please specify the name of the Github repository" ))
-    branch:       master
+    branch:       update-release-tag
+    private_key:  (( param "Please generate an SSH Deployment Key for this repo and specify it here" ))
+
+  spring-github:
+    uri:          (( concat "git@github.com:" meta.github.owner "/" meta.github.repo ))
+    owner:        (( param "Please specify the name of the user / organization that owns the Github repository" ))
+    repo:         (( param "Please specify the name of the Github repository" ))
+    branch:       ci
     private_key:  (( param "Please generate an SSH Deployment Key for this repo and specify it here" ))
 
   go:
@@ -405,3 +412,9 @@ resources:
       user:         (( grab meta.github.owner ))
       repository:   (( grab meta.github.repo ))
       access_token: (( grab meta.github.access_token ))
+  - name: fetch-spring-latest-rel
+    type: github-release
+    source:
+      user:         (( grab meta.spring-github.owner ))
+      repository:   (( grab meta.spring-github.repo ))
+      access_token: (( grab meta.spring-github.access_token ))
