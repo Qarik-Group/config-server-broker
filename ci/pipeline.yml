@@ -115,7 +115,7 @@ jobs:
         - in_parallel:
           - { get: pipeline-tasks }
           - { get: git, trigger: true, passed: [test] }
-          - { get: fetch-spring-latest-rel, trigger: true, passed: [test] }
+          - { get: fetch-spring-latest-rel }
         - task: teardown-testflight
           config:
             platform: linux
@@ -145,6 +145,7 @@ jobs:
                 repository: (( grab meta.image.name ))
                 tag:        (( grab meta.image.tag ))
             inputs:
+              - name: fetch-spring-latest-rel
               - name: pipeline-tasks
               - name: git
             run:
