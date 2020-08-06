@@ -13,10 +13,6 @@ add-apt-repository ppa:rmescandon/yq -y
 apt update -y
 apt install yq -y
 
-latest_release_tag=$(cat fetch-spring-latest-rel/tag)
-echo $latest_release_tag
-yq w git/cf/broker_config.yml config_server_release_tag $latest_release_tag
-
 pushd git
 
 app_name=testflight-config-server-broker
@@ -34,6 +30,7 @@ cat <<EOF > cf/secrets.yml
 broker_auth:
   user: admin
   password: admin
+config_server_release_tag:  (( file fetch-spring-latest-rel/tag ))
 cloud_foundry_config:
   api_url: ${CF_API_URL}
   skip_ssl_validation: true
