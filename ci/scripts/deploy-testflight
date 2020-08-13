@@ -7,10 +7,10 @@ echo "deploy-testflight"
 cf login -a ${CF_API_URL} --skip-ssl-validation -u ${CF_USERNAME} -p ${CF_PASSWORD} -o ${CF_ORG} -s ${CF_SPACE}
 
 apt-key adv --keyserver keyserver.ubuntu.com --recv-keys CC86BB64
-apt-get install software-properties-common -y
-apt-get update -y
-add-apt-repository ppa:rmescandon/yq -y
-apt update -y
+apt-get install software-properties-common
+apt-get update
+add-apt-repository ppa:rmescandon/yq
+apt update
 apt install yq -y
 
 latest_release_tag=$(cat fetch-spring-latest-rel/tag)
