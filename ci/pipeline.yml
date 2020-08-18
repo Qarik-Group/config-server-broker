@@ -71,7 +71,7 @@ groups:
       - shipit
       - major
       - minor
-      - bump-ccs-tag
+      - bump-ccs-ver
       - bump-patch
 
 jobs:
