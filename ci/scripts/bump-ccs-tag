@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -eu
+
+echo "bump-ccs-tag"
+
+latest_release_tag=$(cat fetch-spring-latest-rel/tag)
+sed  -i '' "s/config_server_release_tag:.*/config_server_release_tag: ${latest_release_tag}/" git/cf/broker_config.yml

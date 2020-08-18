@@ -71,6 +71,7 @@ groups:
       - shipit
       - major
       - minor
+      - bump-ccs-tag
       - bump-patch
 
 jobs:
@@ -82,7 +83,6 @@ jobs:
         - in_parallel:
           - { get: git, trigger: true }
           - { get: pipeline-tasks }
-          - { get: fetch-spring-latest-rel, trigger: true }
         - task: test
           config:
             platform: linux
@@ -202,6 +202,34 @@ jobs:
             username: (( grab meta.slack.username ))
             icon_url: (( grab meta.slack.icon ))
             text:    '(( concat meta.slack.fail_url " " meta.pipeline ": minor job failed" ))'
+
+  - name: bump-ccs-ver
+    public: true
+    plan:
+      - do:
+        - { get: fetch-spring-latest-rel, trigger: false}
+        - { get: pipeline-tasks }
+        - task: bump-ccs-tag
+          config:
+            platform: linux
+            image_resource:
+              type: docker-image
+              source:
+                repository: (( grab meta.image.name ))
+                tag:        (( grab meta.image.tag ))
+            inputs:
+              - name: pipeline-tasks
+              - name: git
+            run:
+              path: pipeline-tasks/ci/scripts/bump-ccs-tag
+              args: []
+        on_failure:
+          put: notify
+          params:
+            channel:  (( grab meta.slack.channel ))
+            username: (( grab meta.slack.username ))
+            icon_url: (( grab meta.slack.icon ))
+            text:    '(( concat meta.slack.fail_url " " meta.pipeline ": bump-ccs-tag job failed" ))'
 
   - name: major
     public: true
