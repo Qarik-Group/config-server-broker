@@ -9,7 +9,14 @@ meta:
     uri:          (( concat "git@github.com:" meta.github.owner "/" meta.github.repo ))
     owner:        (( param "Please specify the name of the user / organization that owns the Github repository" ))
     repo:         (( param "Please specify the name of the Github repository" ))
-    branch:       master
+    branch:       update-release-tag
+    private_key:  (( param "Please generate an SSH Deployment Key for this repo and specify it here" ))
+
+  spring-github:
+    uri:          (( concat "git@github.com:" meta.github.owner "/" meta.github.repo ))
+    owner:        (( param "Please specify the name of the user / organization that owns the Github repository" ))
+    repo:         (( param "Please specify the name of the Github repository" ))
+    branch:       ci
     private_key:  (( param "Please generate an SSH Deployment Key for this repo and specify it here" ))
 
   go:
@@ -64,6 +71,7 @@ groups:
       - shipit
       - major
       - minor
+      - bump-ccs-ver
       - bump-patch
 
 jobs:
@@ -107,6 +115,7 @@ jobs:
         - in_parallel:
           - { get: pipeline-tasks }
           - { get: git, trigger: true, passed: [test] }
+          - { get: fetch-spring-latest-rel }
         - task: teardown-testflight
           config:
             platform: linux
@@ -136,6 +145,7 @@ jobs:
                 repository: (( grab meta.image.name ))
                 tag:        (( grab meta.image.tag ))
             inputs:
+              - name: fetch-spring-latest-rel
               - name: pipeline-tasks
               - name: git
             run:
@@ -192,6 +202,34 @@ jobs:
             username: (( grab meta.slack.username ))
             icon_url: (( grab meta.slack.icon ))
             text:    '(( concat meta.slack.fail_url " " meta.pipeline ": minor job failed" ))'
+
+  - name: bump-ccs-ver
+    public: true
+    plan:
+      - do:
+        - { get: fetch-spring-latest-rel, trigger: false}
+        - { get: pipeline-tasks }
+        - task: bump-ccs-tag
+          config:
+            platform: linux
+            image_resource:
+              type: docker-image
+              source:
+                repository: (( grab meta.image.name ))
+                tag:        (( grab meta.image.tag ))
+            inputs:
+              - name: pipeline-tasks
+              - name: git
+            run:
+              path: pipeline-tasks/ci/scripts/bump-ccs-tag
+              args: []
+        on_failure:
+          put: notify
+          params:
+            channel:  (( grab meta.slack.channel ))
+            username: (( grab meta.slack.username ))
+            icon_url: (( grab meta.slack.icon ))
+            text:    '(( concat meta.slack.fail_url " " meta.pipeline ": bump-ccs-tag job failed" ))'
 
   - name: major
     public: true
@@ -405,3 +443,9 @@ resources:
       user:         (( grab meta.github.owner ))
       repository:   (( grab meta.github.repo ))
       access_token: (( grab meta.github.access_token ))
+  - name: fetch-spring-latest-rel
+    type: github-release
+    source:
+      user:         (( grab meta.spring-github.owner ))
+      repository:   (( grab meta.spring-github.repo ))
+      access_token: (( grab meta.spring-github.access_token ))

@@ -14,7 +14,14 @@ meta:
   github:
     owner:  starkandwayne
     repo:   config-server-broker
-    branch: master
+    branch: update-release-tag
+    private_key:  ((github.private-key))
+    access_token: ((github.access-token))
+
+  spring-github:
+    owner:  starkandwayne
+    repo:   spring-cloud-config-server
+    branch: ci
     private_key:  ((github.private-key))
     access_token: ((github.access-token))
 
